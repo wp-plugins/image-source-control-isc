@@ -1,10 +1,9 @@
 === Plugin Name ===
 Contributors: webzunft
-# Donate link: http://example.com/
 Tags: image, images, picture, picture source, image source, mediathek
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 1.1.1
+Stable tag: 1.1.2.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -44,7 +43,16 @@ e.g.
 
 == Changelog ==
 
-= in development =
+= 1.1.2.1 =
+
+* [fixed] wrong user level check caused shortcode to not work for normal visitors
+
+= 1.1.2 =
+* [fixed] wrong version number in main file so wordpress.org didn't inform about updates
+* [fixed] some minor coding standard issues
+* [fixed] small text for donate link
+* [fixed] plugin url
+* [removed] donate link (will come back after 10.000 downloads ;)
 
 = 1.1.1 =
 * [fixed] javascript file is now being loaded and missing fields can be added
