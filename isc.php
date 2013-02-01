@@ -1,11 +1,11 @@
 <?php
 /*
   Plugin Name: Image Source Control
-  Version: 1.1.2.1
-  Plugin URI: http://wordpress.org/extend/plugins/image-source-control-isc/
+  Version: 1.1.3
+  Plugin URI: http://webgilde.com/en/image-source-control/
   Description: The Image Source Control saves the source of an image, lists them and warns if it is missing.
   Author: Thomas Maier
-  Author URI: http://www.webgilde.com
+  Author URI: http://www.webgilde.com/
   License: GPL v3
 
   Image Source Control Plugin for WordPress
@@ -38,7 +38,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ISCVERSION', '1.1.2.1');
+define('ISCVERSION', '1.1.3');
 define('ISCNAME', 'Image Source Control');
 define('ISCTEXTDOMAIN', 'isc');
 define('ISCDIR', basename(dirname(__FILE__)));
@@ -80,6 +80,7 @@ if (!class_exists('ISC_CLASS')) {
             // insert all function for the frontend here
             
             add_shortcode('isc_list', array($this, 'list_post_attachments_with_sources_shortcode'));
+            add_shortcode('isc_list_all', array($this, 'list_all_post_attachments_sources_shortcode'));
             
             // insert all backend functions below this check
             if (!current_user_can('upload_files')) {
@@ -141,6 +142,7 @@ if (!class_exists('ISC_CLASS')) {
 
             // add checkbox to mark as your own image
             $form_fields['isc_image_source_own']['input'] = 'html';
+            $form_fields['isc_image_source_own']['label'] = '';
             $form_fields['isc_image_source_own']['helps'] =
                 __('Check this box if this is your own image and doesn\'t need a source.', ISCTEXTDOMAIN);
             $form_fields['isc_image_source_own']['html'] =
@@ -365,7 +367,7 @@ if (!class_exists('ISC_CLASS')) {
                 return;
             }
 
-            if ('attachment' == $_POST['post_type']) {
+            if (isset($_POST['post_type']) && 'attachment' == $_POST['post_type']) {
                 return;
             }
 
@@ -432,6 +434,7 @@ if (!class_exists('ISC_CLASS')) {
         /**
          * filter image src attribute from text
          * @since 1.1
+         * @updated 1.1.3
          * @return array with image src uris
          */
         public function _filter_src_attributes($content = '')
@@ -453,6 +456,7 @@ if (!class_exists('ISC_CLASS')) {
         /**
          * get image by url accessing the database directly
          * @since 1.1
+         * @updated 1.1.3
          * @param string $url url of the image
          * @return id of the image
          */
@@ -462,13 +466,268 @@ if (!class_exists('ISC_CLASS')) {
                 return 0;
             }
             $types = implode('|', $this->_allowedExtensions);
-            // check for the format 'image-title-300x200.jpg' and remove the image size from it
-            $newurl = preg_replace("/-(\d+)x(\d+)\.({$types})$/i", '.${3}', $url);
+            // check for the format 'image-title-(e12452112-)300x200.jpg' and remove the image size and edit mark from it
+            $newurl = preg_replace("/(-e\d+){0,1}-(\d+)x(\d+)\.({$types})$/i", '.${4}', $url);
             global $wpdb;
             $query = $wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE guid = %s", $newurl);
             $id = $wpdb->get_var($query);
             return $id;
         }
+        
+        /**
+         * create shortcode to list all image sources in the frontend
+         * @param array $atts
+         * @since 1.1.3
+         * @todo link to the post
+         */
+        public function list_all_post_attachments_sources_shortcode($atts = array())
+        {
+        
+            /**
+             * @todo why not translate here with the code below?
+             */
+            extract(shortcode_atts(array(
+                'per_page' => 99999,
+                'before_links' => '',
+                'after_links' => '',
+                'prev_text' => '&#171; Previous',
+                'next_text' => 'Next &#187;'
+                ),
+                $atts));
+            
+            /**
+             * @todo why not include this into the array above?
+             */
+            if ('&#171; Previous' == $prev_text) 
+                $prev_text = __('&#171; Previous', ISCTEXTDOMAIN);
+            if ('Next &#187;' == $next_text) 
+                $next_text = __('Next &#187;', ISCTEXTDOMAIN);
+        
+            // retrieve all attachments
+            $args = array(
+                'post_type' => 'attachment',
+                'numberposts' => -1,
+                'post_status' => null,
+                'post_parent' => null,
+                /** @todo maybe add offset to not retrieve the first results when not on first page */
+                /** @todo maybe add limit to not retrieve more results than on the current page */
+            );
+
+            $attachments = get_posts($args);
+            if (empty($attachments)) {
+                return;
+            }
+            
+            $connected_atts = array();
+            
+            //Keeps only those ones who have parent
+            
+            foreach ($attachments as $_attachment) {
+                if ($_attachment->post_parent) {
+                    $connected_atts[$_attachment->ID]['source'] = get_post_meta($_attachment->ID, 'isc_image_source', true);
+                    $connected_atts[$_attachment->ID]['own'] = get_post_meta($_attachment->ID, 'isc_image_source_own', true);
+                    $connected_atts[$_attachment->ID]['title'] = $_attachment->post_title;
+                    $connected_atts[$_attachment->ID]['parent'] = get_the_title($_attachment->post_parent);
+                }
+            }
+            
+            $total = count($connected_atts);
+            
+            if (0 == $total) 
+                return;
+            
+            $page = isset($_GET['isc-page']) ? intval($_GET['isc-page']) : 1;
+            $down_limit = 1; // First page
+            
+            $up_limit = 1;
+            
+            if ($per_page < $total) {
+                $rem = $total % $per_page; // The Remainder of $total/$per_page
+                $up_limit = ($total - $rem) / $per_page;
+                if (0 < $rem) {
+                    $up_limit++; //If rem is positive, add the last page that contains less than $per_page attachment;
+                }
+            }
+                
+            ob_start();
+            if ( 2 > $up_limit ) {
+                $this->display_all_attachment_list($connected_atts);
+            } else {
+                $starting_atts = $per_page * ($page - 1); // for page 2 and 3 $per_page start display on $connected_atts[3*(2-1) = 3]
+                $paged_atts = array_slice($connected_atts, $starting_atts, $per_page, true);
+                $this->display_all_attachment_list($paged_atts);
+                $this->pagination_links($up_limit, $before_links, $after_links, $prev_text, $next_text);
+            } 
+            
+            $output = ob_get_clean();
+            return $output;
+        }
+        
+        
+        /**
+        * performs rendering of all attachments list
+         * @since 1.1.3
+        */
+        public function display_all_attachment_list($atts)
+        {
+            if (! is_array($atts) || $atts == array())
+                return;
+            ?>
+            <table>
+                <thead>
+                    <?php /* <th><?php _e("Attachment's ID", ISCTEXTDOMAIN); ?></th>*/ ?>
+                    <th><?php _e('Title', ISCTEXTDOMAIN); ?></th>
+                    <th><?php _e('Attached to', ISCTEXTDOMAIN); ?></th>
+                    <th><?php _e('Source', ISCTEXTDOMAIN); ?></th>
+                </thead>
+                <tbody>
+                <?php foreach ($atts as $id => $data) : ?>
+                    <?php
+                        /** @todo ment for later: this text was used above already; find a place to but it so it is defined only once and used where needed */    
+                        $source = __('Not available', ISCTEXTDOMAIN);
+                        if (1 == $data['own']) {
+                            /** @todo ment for later: this text was used above already; find a place to but it so it is defined only once and used where needed */
+                            $source = __('By the author', ISCTEXTDOMAIN);
+                        } elseif (!empty($data['source'])) {
+                            $source = $data['source'];
+                        }
+                    ?>
+                    <tr>
+                    <?php /* <td><?php echo $id ?></td>*/ ?>
+                    <td><?php echo $data['title']; ?></td><td><?php echo $data['parent']; ?></td><td><?php echo esc_attr($source); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php
+        }
+        
+        /**
+        * Render pagination links, use $before_links and after_links to wrap pagination links inside an additional block
+         * @param int $max_page total page count
+         * @param string $before_links optional html to display before pagination links
+         * @param string $after_links optional html to display after pagination links
+         * @param string $prev_text text for the previous page link
+         * @param string $next_text text for the next page link
+         * @since 1.1.3
+         * 
+        */
+        public function pagination_links($max_page, $before_links, $after_links, $prev_text, $next_text)
+        {
+            if ((! isset($max_page)) || (! isset($before_links)) || (! isset($after_links)) || (! isset($prev_text)) || (! isset($next_text)))
+                return;
+            if (! empty($before_links)) 
+                echo $before_links;
+                ?>
+                <div class="isc-paginated-links">
+                <?php
+                $page = isset($_GET['isc-page']) ? intval($_GET['isc-page']) : 1;
+                if ($max_page < $page) {                
+                    $page = $max_page;
+                }
+                if ($page < 1) {
+                    $page = 1;
+                }
+                $min_page = 1;
+                $backward_distance = $page - $min_page;
+                $forward_distance = $max_page - $page;
+                
+                $original_page_link = get_page_link();
+                
+                /** 
+                * Remove the query_string of the page_link (?page_id=xyz for the standard permalink structure), 
+                * which is already captured in $_SERVER['QUERY_STRING'].
+                * @todo replace regex with other value (does WP store the url path without attributes somewhere?
+                */                
+                $page_link = preg_replace('#\?.*$#', '', $original_page_link);
+                
+                /**
+                * Unset the actual "$_GET['isc-page']" variable (if is set). Pagination variable will be appended to the new query string with a different value for each 
+                * pagination link.
+                */
+                
+                if (isset($_GET['isc-page'])) {
+                    unset($_GET['isc-page']);
+                }
+                
+                $query_string = http_build_query($_GET);
+				
+                $isc_query_tag = '';
+                if (empty($query_string)) {
+                    $isc_query_tag = '?isc-page=';
+                } else {
+                    $query_string = '?' . $query_string;
+                    $isc_query_tag = '&isc-page=';
+                }
+                
+                if ($min_page != $page) {
+                    ?>
+                    <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page-1); ?>" class="prev page-numbers"><?php echo $prev_text; ?></a>
+                    <?php
+                }
+                
+                if (5 < $max_page) {
+                    
+                    if (3 < $backward_distance) {
+                        ?>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag; ?>1" class="page-numbers">1</a>
+                        <span class="page-numbers dots">...</span>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page-2);?>" class="page-numbers"><?php echo $page-2; ?></a>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page-1);?>" class="page-numbers"><?php echo $page-1; ?></a>
+                        <span class="page-numbers current"><?php echo $page; ?></span>
+                        <?php
+                    } else {
+                        for ($i = 1; $i <= $page; $i++) {
+                            if ($i == $page) { 
+                            ?>
+                                <span class="page-numbers current"><?php echo $i; ?></span>
+                            <?php
+                            } else { 
+                            ?>
+                                <a href="<?php echo $page_link . $query_string . $isc_query_tag . $i;?>" class="page-numbers"><?php echo $i; ?></a>
+                            <?php
+                            }
+                        }
+                    }
+                    
+                    if (3 < $forward_distance) {
+                    ?>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page+1);?>" class="page-numbers"><?php echo $page+1; ?></a>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page+2);?>" class="page-numbers"><?php echo $page+2; ?></a>
+                        <span class="page-numbers dots">...</span>
+                        <a href="<?php echo $page_link . $query_string . $isc_query_tag . $max_page;?>" class="page-numbers"><?php echo $max_page; ?></a>
+                    <?php
+                    } else {
+                        for ($i = $page+1; $i <= $max_page; $i++) {
+                            ?>
+                            <a href="<?php echo $page_link . $query_string . $isc_query_tag . $i;?>" class="page-numbers"><?php echo $i; ?></a>
+                            <?php
+                        }
+                    }                    
+                } else {
+                    for ($i = 1; $i <= $max_page; $i++) {
+                        if ($i == $page) { 
+                        ?>
+                            <span class="page-numbers current"><?php echo $i; ?></span>
+                        <?php
+                        } else { 
+                        ?>
+                            <a href="<?php echo $page_link . $query_string . $isc_query_tag . $i;?>" class="page-numbers"><?php echo $i; ?></a>
+                        <?php
+                        }
+                    }
+                }                
+                if ($page != $max_page) {
+                    ?>
+                    <a href="<?php echo $page_link . $query_string . $isc_query_tag . ($page+1);?>" class="next page-numbers"><?php echo $next_text; ?></a>
+                    <?php
+                }
+                ?>
+                </div>
+                <?php
+                echo $after_links;
+        }
+        
     }// end of class
 
     /**
