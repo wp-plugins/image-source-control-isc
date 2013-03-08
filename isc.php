@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Image Source Control
-  Version: 1.2.0.1
+  Version: 1.2.0.2
   Plugin URI: http://webgilde.com/en/image-source-control/
   Description: The Image Source Control saves the source of an image, lists them and warns if it is missing.
   Author: Thomas Maier
@@ -38,7 +38,7 @@ if (!function_exists('add_action')) {
     exit();
 }
 
-define('ISCVERSION', '1.2.0.1');
+define('ISCVERSION', '1.2.0.2');
 define('ISCNAME', 'Image Source Control');
 define('ISCTEXTDOMAIN', 'isc');
 define('ISCDIR', basename(dirname(__FILE__)));
@@ -982,21 +982,20 @@ if (!class_exists('ISC_CLASS')) {
         * manage data structure upgrading of outdated versions
         */
         public function upgrade_management() {
-            /**
-            * Since the activation hook is not executed on plugin upgrade, this function checks options in database
-            * during the admin_init hook to handle plugin's upgrade.
-            */
-            
+            /*
+             * Since the activation hook is not executed on plugin upgrade, this function checks options in database
+             * during the admin_init hook to handle plugin's upgrade.
+             */
             $options = get_option( 'isc_options' );
-            
+            if (!is_array($options)) {
+                $options = array();
+            }
+
             $max_step = count($this->_upgrade_step);
             $step_count = 0;
-            
-            if (!is_array($options) || !isset($options['version'])){ // versions prior to 1.2
-            
-                $options = array();
-                $default = $this->default_options();
-                $options = $options + $default;
+
+            if (!isset($options['version'])) { // versions prior to 1.2
+                $options = $options + $this->default_options();
                 $this->init_image_posts_metafield();
                 $options['installed'] = true;
                 
