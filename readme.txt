@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: image, images, picture, picture source, image source, mediathek
 Requires at least: 3.4
-Tested up to: 3.6.1
-Stable tag: 1.3.4.1
+Tested up to: 3.8 RC1
+Stable tag: 1.3.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -52,6 +52,13 @@ e.g.
 1. added two new fields to media library
 
 == Changelog ==
+
+= 1.3.5 =
+
+* [feature] added hooks to enable developers to add their own images to the image source list (more information in the [manual](http://webgilde.com/en/image-source-control/image-source-control-manual/))
+* [feature] added image licences
+* updated settings page layout so it works WordPress 3.8 RC1
+* [l10n] updated German translation
 
 = 1.3.4 =
 
