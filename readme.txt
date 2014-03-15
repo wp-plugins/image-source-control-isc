@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: image, images, picture, picture source, image source, mediathek
 Requires at least: 3.5
-Tested up to: 3.8.1
-Stable tag: 1.4
+Tested up to: 3.8.2
+Stable tag: 1.4.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -52,6 +52,17 @@ e.g.
 1. added two new fields to media library
 
 == Changelog ==
+
+= 1.4.2 =
+
+* [bugfix] setting default meta values if isc functions are directly called
+* [bugfix] minor error when image own checkbox is not checked
+* [bugfix] don’t link to unpublished posts from the image source list
+* [bugfix] check if `mb_convert_encoding()` function exists before using it
+
+= 1.4.1 =
+
+* [bugfix] fixing js issue breaking save and preview function
 
 = 1.4 =
 

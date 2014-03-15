@@ -296,7 +296,8 @@ if (!class_exists('ISC_CLASS')) {
             if (isset($attachment['isc_image_source'])) {
                 update_post_meta($post['ID'], 'isc_image_source', $attachment['isc_image_source']);
             }
-            update_post_meta($post['ID'], 'isc_image_source_own', $attachment['isc_image_source_own']);
+            $own = (isset($attachment['isc_image_source_own'])) ? $attachment['isc_image_source_own'] : '';
+            update_post_meta($post['ID'], 'isc_image_source_own', $own);
             if (isset($attachment['isc_image_licence'])) {
                 update_post_meta($post['ID'], 'isc_image_licence', $attachment['isc_image_licence']);
             }
@@ -655,7 +656,9 @@ if (!class_exists('ISC_CLASS')) {
             $dom = new DOMDocument;
 
             libxml_use_internal_errors(true);
-            $content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
+            // TODO better DOM method again regex (wasn’t able so far due to encoding problems)
+            if(function_exists('mb_convert_encoding'))
+                $content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
             $dom->loadHTML($content);
 
             // Prevents from sending E_WARNINGs notice (Outputs are forbidden during activation)
@@ -710,6 +713,8 @@ if (!class_exists('ISC_CLASS')) {
             $image_urls = apply_filters('isc_images_in_posts_simple', $image_urls, $post_id);
 
             $isc_post_images = get_post_meta($post_id, 'isc_post_images', true);
+            // just needed in very rare cases, when updates comes from outside of isc and meta fields doesn’t exist yet
+            if(empty($isc_post_images)) $isc_post_images = array();
 
             foreach ($image_urls as $url) {
                 $id = intval($this->get_image_by_url($url));
@@ -827,11 +832,14 @@ if (!class_exists('ISC_CLASS')) {
                 if (is_array($metadata) && array() != $metadata) {
                     $usage_data .= "<ul style='margin: 0;'>";
                     foreach($metadata as $data) {
-                        $usage_data .= sprintf(__('<li><a href="%1$s" title="View %2$s">%3$s</a></li>', ISCTEXTDOMAIN),
-                            esc_url(get_permalink($data)),
-                            esc_attr(get_the_title($data)),
-                            esc_html(get_the_title($data))
-                        );
+                        // only list published posts
+                        if(get_post_status($data) == 'publish') {
+                            $usage_data .= sprintf(__('<li><a href="%1$s" title="View %2$s">%3$s</a></li>', ISCTEXTDOMAIN),
+                                esc_url(get_permalink($data)),
+                                esc_attr(get_the_title($data)),
+                                esc_html(get_the_title($data))
+                            );
+                        }
                     }
                     $usage_data .= "</ul>";
                 }
