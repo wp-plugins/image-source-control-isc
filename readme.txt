@@ -1,9 +1,9 @@
-=== Plugin Name ===
+=== Image Source Control ===
 Contributors: webzunft
 Tags: image, images, picture, picture source, image source, mediathek
 Requires at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 1.4.3
+Stable tag: 1.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -25,6 +25,8 @@ Image Source Control (ISC) helps to prevent this situation.
 * shortcode to list the sources in the editor
 * shortcode to list all images in the blog as a paginated list
 * function to include sources of a post in templates
+* link sources to any url
+* manage, display and link licences
 
 **Localization**
 
@@ -52,6 +54,18 @@ e.g.
 1. added two new fields to media library
 
 == Changelog ==
+
+= 1.6 =
+
+Some major change under the hood. On blogs with a lot of posts and images the activation crashed due to auto index of all meta fields.
+If everything works as expected you might not notice a change. There is only a second list on the missing image page.
+Read [this post](http://webgilde.com/en/image-source-control-1-6/) to learn more about it.
+
+= 1.5 =
+
+* [feature] added function to get single image source from within templates
+* [feature] link the image source to a url; added url field to image source input fields
+* [optimized] using just a single function to create the source string whereever needed (fixes missing licence on full image lists)
 
 = 1.4.3 =
 

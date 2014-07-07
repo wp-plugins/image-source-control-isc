@@ -18,6 +18,10 @@ if (!class_exists('ISC_CLASS')) {
                 'id' => 'isc_image_source',
                 'default' => '',
             ),
+            'image_source_url' => array(
+                'id' => 'isc_image_source_url',
+                'default' => '',
+            ),
             'image_source_own' => array(
                 'id' => 'isc_image_source_own',
                 'default' => '',
@@ -110,49 +114,19 @@ if (!class_exists('ISC_CLASS')) {
         }
 
         /**
-         * load an image source by url
+         * load an image source string by url
          *
-         * @updated 1.3.5
+         * @updated 1.5
          * @param string $url url of the image
          * @return type
          */
         public function get_source_by_url($url)
         {
-            $options = $this->get_isc_options();
+            // get the id by the image source
             $id = $this->get_image_by_url($url);
-            $metadata['source'] = get_post_meta($id, 'isc_image_source', true);
-            $metadata['own'] = get_post_meta($id, 'isc_image_source_own', true);
-            $metadata['licence'] = get_post_meta($id, 'isc_image_licence', true);
 
-            $source = $this->_common_texts['not_available'];
+            return $this->render_image_source_string($id);
 
-            $att_post = get_post($id);
-
-            if ('' != $metadata['own']) {
-                if ($this->_options['use_authorname']) {
-                    if (!empty($att_post)) {
-                        $source = get_the_author_meta('display_name', $att_post->post_author);
-                    }
-                } else {
-                    $source = $this->options['by_author_text'];
-                }
-            } else {
-                if ('' != $metadata['source']) {
-                    $source = $metadata['source'];
-                }
-            }
-            // add licence if enabled
-            if($options['enable_licences'] && isset($metadata['licence']) && $metadata['licence']) {
-                $licences = $this->licences_text_to_array($options['licences']);
-                if(isset($licences[$metadata['licence']]['url'])) $licence_url = $licences[$metadata['licence']]['url'];
-                if($licence_url) {
-                    $source = sprintf('%1$s | <a href="%3$s" target="_blank" rel="nofollow">%2$s</a>', $source, $metadata['licence'], $licence_url);
-                } else {
-                    $source = sprintf('%1$s | %2$s', $source, $metadata['licence']);
-                }
-            }
-
-            return $source;
         }
 
         /**
@@ -187,6 +161,63 @@ if (!class_exists('ISC_CLASS')) {
                 }
             }
             return $content;
+        }
+
+        /**
+         * render source string of single image by its id
+         *  this only returns the string with source and licence (and urls),
+         *  but no wrapping, because the string is used in a lot of functions
+         *  (e.g. image source list where title is prepended)
+         *
+         * @updated 1.5 wrapped source into source url
+         *
+         * @param int $id id of the image
+         */
+        public function render_image_source_string($id){
+            $id = absint($id);
+
+            $options = $this->get_isc_options();
+
+            $metadata['source'] = get_post_meta($id, 'isc_image_source', true);
+            $metadata['source_url'] = get_post_meta($id, 'isc_image_source_url', true);
+            $metadata['own'] = get_post_meta($id, 'isc_image_source_own', true);
+            $metadata['licence'] = get_post_meta($id, 'isc_image_licence', true);
+
+            $source = $this->_common_texts['not_available'];
+
+            $att_post = get_post($id);
+
+            if ('' != $metadata['own']) {
+                if ($this->_options['use_authorname']) {
+                    if (!empty($att_post)) {
+                        $source = get_the_author_meta('display_name', $att_post->post_author);
+                    }
+                } else {
+                    $source = $this->options['by_author_text'];
+                }
+            } else {
+                if ('' != $metadata['source']) {
+                    $source = $metadata['source'];
+                }
+            }
+
+            // wrap link around source, if given
+            if('' != $metadata['source_url']){
+                $source = sprintf('<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>', $source, $metadata['source_url']);
+            }
+
+            // add licence if enabled
+            if($options['enable_licences'] && isset($metadata['licence']) && $metadata['licence']) {
+                $licences = $this->licences_text_to_array($options['licences']);
+                if(isset($licences[$metadata['licence']]['url'])) $licence_url = $licences[$metadata['licence']]['url'];
+                if($licence_url) {
+                    $source = sprintf('%1$s | <a href="%3$s" target="_blank" rel="nofollow">%2$s</a>', $source, $metadata['licence'], $licence_url);
+                } else {
+                    $source = sprintf('%1$s | %2$s', $source, $metadata['licence']);
+                }
+            }
+
+            return $source;
         }
 
         public function attachment_added($att_id)
@@ -246,20 +277,23 @@ if (!class_exists('ISC_CLASS')) {
                 // 2013-12-11 (maik) quick fix for post.php.js to avoid access conflicts caused by other plugins due to by inconsistent naming
                 wp_enqueue_script('isc_postphp_script', plugins_url('/js/post.js', __FILE__), array('jquery'), ISCVERSION);
             }
-            if ($hook == $isc_setting) {
+            //if ($hook == $isc_setting) {
                 wp_enqueue_script('isc_script', plugins_url('/js/isc.js', __FILE__), false, ISCVERSION);
                 wp_enqueue_style('isc_image_settings_css', plugins_url('/css/image-settings.css', __FILE__), false, ISCVERSION);
-            }
+            //}
         }
 
         /**
          * add custom field to attachment
-         * @param arr $form_fields
-         * @param object $post
-         * @return arr
+         *
          * @since 1.0
          * @updated 1.1
          * @updated 1.3.5 added field for licence
+         * @updated 1.5 added field for url
+
+         * @param arr $form_fields
+         * @param object $post
+         * @return arr
          */
         public function add_isc_fields($form_fields, $post)
         {
@@ -278,6 +312,11 @@ if (!class_exists('ISC_CLASS')) {
                 . checked(get_post_meta($post->ID, 'isc_image_source_own', true), 1, false )
                 . " style=\"width:14px\"/> "
                 . __('This is my image', ISCTEXTDOMAIN);
+
+            // add input field for source url
+            $form_fields['isc_image_source_url']['label'] = __('Image Source URL', ISCTEXTDOMAIN);
+            $form_fields['isc_image_source_url']['value'] = get_post_meta($post->ID, 'isc_image_source_url', true);
+            $form_fields['isc_image_source_url']['helps'] = __('URL to link the source text to.', ISCTEXTDOMAIN);
 
             // add input field for source
             $options = $this->get_isc_options();
@@ -299,6 +338,9 @@ if (!class_exists('ISC_CLASS')) {
 
         /**
          * save image source to post_meta
+         *
+         * @updated 1.5 added field for url
+         *
          * @param object $post
          * @param $attachment
          * @return object $post
@@ -307,6 +349,10 @@ if (!class_exists('ISC_CLASS')) {
         {
             if (isset($attachment['isc_image_source'])) {
                 update_post_meta($post['ID'], 'isc_image_source', $attachment['isc_image_source']);
+            }
+            if (isset($attachment['isc_image_source_url'])) {
+                $url = sanitize_url($attachment['isc_image_source_url']);
+                update_post_meta($post['ID'], 'isc_image_source_url', $url);
             }
             $own = (isset($attachment['isc_image_source_own'])) ? $attachment['isc_image_source_own'] : '';
             update_post_meta($post['ID'], 'isc_image_source_own', $own);
@@ -318,8 +364,11 @@ if (!class_exists('ISC_CLASS')) {
 
         /**
          * create image sources list for all images of this post
+         *
          * @since 1.0
          * @updated 1.1, 1.3.5
+         * @updated 1.5 use new render function to create basic image source string
+         *
          * @param int $post_id id of the current post/page
          * @return echo output
          */
@@ -344,51 +393,23 @@ if (!class_exists('ISC_CLASS')) {
                 $attachments = get_post_meta($post_id, 'isc_post_images', true);
             }
 
-            // get licence array
-            $options = $this->get_isc_options();
-            if(!$options['enable_licences']) {
-                $licences = false;
-            } else {
-                $licences = $this->licences_text_to_array($options['licences']);
-                if($licences == false) $licences = array();
-            }
-
             $return = '';
             if (!empty($attachments)) {
                 $atts = array();
                 foreach ($attachments as $attachment_id => $attachment_array) {
-                    $atts[$attachment_id]['title'] = get_the_title($attachment_id);
+
                     $own = get_post_meta($attachment_id, 'isc_image_source_own', true);
                     $source = get_post_meta($attachment_id, 'isc_image_source', true);
 
-                    // remove if no information set or author images are not to be displayed
+                    // check if source of own images can be displayed
                     if ( ($own == '' && $source == '' ) || ($own != '' && $this->_options['exclude_own_images'])) {
                         unset($atts[$attachment_id]);
                         continue;
-                    } elseif ($own != '') {
-                        if ($this->_options['use_authorname']) {
-                            $authorname = '';
-                            $att_post = get_post($attachment_id);
-                            if (null !== $att_post) {
-                                $authorname = get_the_author_meta('display_name', $att_post->post_author);
-                            }
-                            $atts[$attachment_id ]['source'] = $authorname;
-                        } else {
-                            $atts[$attachment_id ]['source'] = $this->_options['by_author_text'];
-                        }
                     } else {
-                        $atts[$attachment_id ]['source'] = $source;
+                        $atts[$attachment_id]['title'] = get_the_title($attachment_id);
+                        $atts[$attachment_id]['source'] = $this->render_image_source_string($attachment_id);
                     }
 
-                    // add licence information
-                    // TODO maybe don’t display an unused licence (e.g. removed from the licence textarea)
-                    if(is_array($licences)) {
-                        $_licence = get_post_meta($attachment_id, 'isc_image_licence', true);
-                        if(isset($licences[$_licence]['url'])) {
-                            $atts[$attachment_id]['licence_url'] = $licences[$_licence]['url'];
-                        }
-                        if($_licence) $atts[$attachment_id]['licence'] = $_licence;
-                    }
                 }
 
                 $return = $this->_renderAttachments($atts);
@@ -402,6 +423,7 @@ if (!class_exists('ISC_CLASS')) {
          *
          * @param array $attachments
          * @updated 1.3.5
+         * @updated 1.5 removed rendering the licence to an earlier function
          */
         protected function _renderAttachments($attachments)
         {
@@ -435,15 +457,7 @@ if (!class_exists('ISC_CLASS')) {
                 if (empty($atts_array['source'])) {
                     continue;
                 }
-                // TODO find a more flexible way to create the source information in less lines
-                if($options['enable_licences'] && isset($atts_array['licence']))
-                    if($atts_array['licence_url']) {
-                        printf('<li>%1$s: %2$s | <a href="%4$s" target="_blank" rel="nofollow">%3$s</a></li>', $atts_array['title'], $atts_array['source'], $atts_array['licence'], $atts_array['licence_url']);
-                    } else {
-                        printf('<li>%1$s: %2$s | %3$s</li>', $atts_array['title'], $atts_array['source'], $atts_array['licence']);
-                    }
-                else
-                    printf('<li>%1$s: %2$s</li>', $atts_array['title'], $atts_array['source']);
+                printf('<li>%1$s: %2$s</li>', $atts_array['title'], $atts_array['source']);
             }
             ?></ul></div><?php
             return ob_get_clean();
@@ -470,11 +484,9 @@ if (!class_exists('ISC_CLASS')) {
         }
 
         /**
-         * get all attachments without sources
-         * the downside of this function: is there is not even an empty metakey field, nothing is going to be retrieved
-         * @todo fix this in WP 3.5 with compare => 'NOT EXISTS'
+         * get all attachments with empty sources string
          */
-        public function get_attachments_without_sources()
+        public function get_attachments_with_empty_sources()
         {
             $args = array(
                 'post_type' => 'attachment',
@@ -488,11 +500,39 @@ if (!class_exists('ISC_CLASS')) {
                         'value' => '',
                         'compare' => '=',
                     ),
-                    // and image source is not set
+                    // and does not belong to an author
                     array(
                         'key' => 'isc_image_source_own',
                         'value' => '1',
                         'compare' => '!=',
+                    ),
+                )
+            );
+
+            $attachments = get_posts($args);
+            if (!empty($attachments)) {
+                return $attachments;
+            }
+        }
+
+        /**
+         * get all attachments without the proper meta values (needed mostly after installing the plugin for unindexed images)
+         *
+         * @since 1.6
+         */
+        public function get_attachments_without_sources()
+        {
+            $args = array(
+                'post_type' => 'attachment',
+                'numberposts' => -1,
+                'post_status' => null,
+                'post_parent' => null,
+                'meta_query' => array(
+                    // image source is empty
+                    array(
+                        'key' => 'isc_image_source',
+                        'value' => 'any', /* any string; needed prior to WP 3.9 */
+                        'compare' => 'NOT EXISTS',
                     ),
                 )
             );
@@ -593,8 +633,8 @@ if (!class_exists('ISC_CLASS')) {
         }
 
         /**
-         * save image information for a post when it is viewed and the image source list is enabled
-         * (this is in case the plugin is new and the current post wasn't saved before)
+         * save image information for a post when it is viewed – only called when using isc_list function
+         * (to help indexing old posts)
          *
          * @since 1.1
          */
@@ -612,7 +652,7 @@ if (!class_exists('ISC_CLASS')) {
         }
 
         /**
-         * retrieve images added to a post or page and save all information as a meta value
+         * retrieve images added to a post or page and save all information as a post meta value for the post
          * @since 1.1
          * @updated 1.3.5 added isc_images_in_posts filter
          * @todo check for more post types that maybe should not be parsed here
@@ -647,7 +687,7 @@ if (!class_exists('ISC_CLASS')) {
             $_imgs = apply_filters('isc_images_in_posts', $_imgs, $post_id);
 
             if (empty($_imgs)) {
-                $_imgs = false;
+                $_imgs = array();
             }
             update_post_meta($post_id, 'isc_post_images', $_imgs);
         }
@@ -900,6 +940,7 @@ if (!class_exists('ISC_CLASS')) {
         /**
         * performs rendering of all attachments list
         * @since 1.1.3
+        * @update 1.5 added new method to get source
         */
         public function display_all_attachment_list($atts)
         {
@@ -921,18 +962,7 @@ if (!class_exists('ISC_CLASS')) {
                 <tbody>
                 <?php foreach ($atts as $id => $data) : ?>
                     <?php
-                        $source = $this->_common_texts['not_available'];
-                        if ('' != $data['own']) {
-                            /** @todo ment for later: this text was used above already; find a place to but it so it is defined only once and used where needed */
-                            if ($this->_options['use_authorname']) {
-                                $source = $data['author_name'];
-                            } else {
-                                $source = $this->_options['by_author_text'];
-                            }
-                        } else {
-                            if (!empty($data['source']))
-                                $source = $data['source'];
-                        }
+                        $source = $this->render_image_source_string($id);
                     ?>
                     <tr>
                         <?php
@@ -949,7 +979,7 @@ if (!class_exists('ISC_CLASS')) {
                         <td <?php echo $v_align;?>><?php echo $id; ?></td>
                         <td <?php echo $v_align;?>><?php echo $data['title']; ?></td>
                         <td <?php echo $v_align;?>><?php echo $data['posts']; ?></td>
-                        <td <?php echo $v_align;?>><?php echo esc_html($source); ?></td>
+                        <td <?php echo $v_align;?>><?php echo $source; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -1104,11 +1134,18 @@ if (!class_exists('ISC_CLASS')) {
                 * Important: NO add_action('something', 'somefunction') here.
                 */
 
+                /**
+                 * auto indexation removed in version 1.6
+                 * not needed due to NOT EXISTS for meta fields since WP 3.5
+                 *
+                 * @todo remove the functions completely
+                 */
+
                 // adds meta fields for attachments
-                $this->add_meta_values_to_attachments();
+                // $this->add_meta_values_to_attachments();
 
                 // set all isc_image_posts meta fields.
-                $this->init_image_posts_metafield();
+                // $this->init_image_posts_metafield();
 
                 $options['installed'] = true;
                 update_option('isc_options', $options);
@@ -1604,6 +1641,8 @@ if (!class_exists('ISC_CLASS')) {
         */
         public function admin_notices()
         {
+
+            // attachments without sources
             $args = array(
                 'post_type' => 'attachment',
                 'numberposts' => -1,
@@ -1617,17 +1656,33 @@ if (!class_exists('ISC_CLASS')) {
                     ),
                     array(
                         'key' => 'isc_image_source_own',
-                        'value' => '',
-                        'compare' => ''
+                        'value' => '1',
+                        'compare' => '!=',
                     )
                 )
             );
             $attachments = get_posts($args);
+
+            // load unindexed attachments
+            $args = array(
+                'post_type' => 'attachment',
+                'numberposts' => -1,
+                'post_status' => null,
+                'post_parent' => null,
+                'meta_query' => array(
+                    array(
+                        'key' => 'isc_image_source',
+                        'value' => 'any',
+                        'compare' => 'NOT EXISTS'
+                    ),
+                )
+            );
+            $attachments2 = get_posts($args);
             $options = $this->get_isc_options();
-            if (!empty($attachments) && $options['warning_onesource_missing'] ) {
+            if ((!empty($attachments) || !empty($attachments2)) && $options['warning_onesource_missing'] ) {
             $missing_src = esc_url(admin_url('upload.php?page=isc_missing_sources_page'));
             ?>
-                <div class="updated"><p><?php printf(__('One or more attachments still have no source. See the <a href="%s">missing sources</a> list', ISCTEXTDOMAIN), $missing_src);?></p></div>
+                <div class="error"><p><?php printf(__('One or more attachments still have no source. See the <a href="%s">missing sources</a> list', ISCTEXTDOMAIN), $missing_src);?></p></div>
             <?php
             }
         }
