@@ -89,10 +89,12 @@ if (!class_exists('ISC_CLASS')) {
             add_shortcode('isc_list_all', array($this, 'list_all_post_attachments_sources_shortcode'));
             add_action('wp_enqueue_scripts', array($this, 'front_scripts'));
             add_action('wp_head', array($this, 'front_head'));
-            add_action('the_content', array($this, 'content_filter'));
+
+            // ajax actions
+            add_action('wp_ajax_isc-post-image-relations', array($this, 'list_post_image_relations'));
+            add_action('wp_ajax_isc-image-post-relations', array($this, 'list_image_post_relations'));
 
             // insert all backend functions below this check
-
             if (is_admin()) {
                 register_activation_hook(ISCPATH . '/isc.php', array($this, 'activation'));
 
@@ -110,6 +112,9 @@ if (!class_exists('ISC_CLASS')) {
 
                 // save image information in meta field when a post is saved
                 add_action('save_post', array($this, 'save_image_information_on_post_save'));
+            } else {
+                // frontend functions
+                add_filter('the_content', array($this, 'content_filter'), 20);
             }
         }
 
@@ -130,7 +135,7 @@ if (!class_exists('ISC_CLASS')) {
         }
 
         /**
-         * filter post content for captions and include source into caption, if this setting is enabled
+         * add captions to post content and include source into caption, if this setting is enabled
          *
          * @param string $content post content
          * @return string $content
@@ -139,6 +144,7 @@ if (!class_exists('ISC_CLASS')) {
          */
         public function content_filter($content)
         {
+            // display inline sources
             $options = $this->get_isc_options();
             if ($options['source_on_image']) {
                 $pattern = '#(\[caption.*align="(.+)"[^\]*]{0,}\])? *(<a [^>]+>)? *(<img .*class=".*(align\d{4,})?.*wp-image-(\d+)\D*".*src="(.+)".*/?>).*(?(3)(?:</a>)|.*).*(?(1)(?:\[/caption\])|.*)#isU';
@@ -160,6 +166,12 @@ if (!class_exists('ISC_CLASS')) {
                     }
                 }
             }
+
+            // attach image source list to content, if option is enabled
+            if (is_single() && $options['attach_list_to_post']) {
+                $content = $content . $this->list_post_attachments_with_sources();
+            }
+
             return $content;
         }
 
@@ -375,7 +387,6 @@ if (!class_exists('ISC_CLASS')) {
         public function list_post_attachments_with_sources($post_id = 0)
         {
             global $post;
-
             if (empty($post_id)) {
                 if (!empty($post->ID)) {
                     $post_id = $post->ID;
@@ -1190,7 +1201,10 @@ if (!class_exists('ISC_CLASS')) {
             register_setting('isc_options_group', 'isc_options', array($this, 'settings_validation'));
             add_settings_section('isc_settings_section', '', '__return_false', 'isc_settings_page');
 
-            // Starts Page/Post settings group
+            // Starts Page/Post settings group with attach list to post option
+            add_settings_field('attach_list_to_post', __('Display image source list', ISCTEXTDOMAIN), array($this, 'renderfield_attach_list_to_post'), 'isc_settings_page', 'isc_settings_section');
+
+            // title of the source list
             add_settings_field('image_list_headline', __('Image list headline', ISCTEXTDOMAIN), array($this, 'renderfield_list_headline'), 'isc_settings_page', 'isc_settings_section');
             /**
             * All new setting in Page/Post group Here!
@@ -1291,6 +1305,18 @@ if (!class_exists('ISC_CLASS')) {
         * WordPress Setting API Callbacks
         * *******************************
         */
+        public function renderfield_attach_list_to_post()
+        {
+            $options = $this->get_isc_options();
+            $description = __('Displays the list of image sources below the post/page.', ISCTEXTDOMAIN);
+            ?>
+            <div id="attach-list-to-post-block">
+                <input type="checkbox" name="isc_options[attach_list_to_post]" id="attach-list-to-post" <?php checked($options['attach_list_to_post']); ?> />
+                <label for="attach-list-to-post"><?php echo $description; ?></label>
+            </div>
+            <?php
+        }
+
         public function renderfield_list_headline()
         {
             $options = $this->get_isc_options();
@@ -1532,6 +1558,11 @@ if (!class_exists('ISC_CLASS')) {
         {
             $output = $this->get_isc_options();
             $output['image_list_headline'] = esc_html($input['image_list_headline_field']);
+            if (isset($input['attach_list_to_post'])) {
+                $output['attach_list_to_post'] = true;
+            } else {
+                $output['attach_list_to_post'] = false;
+            }
             if (isset($input['use_authorname_ckbox'])) {
                 // Don't worry about the custom text if the author name is selected.
                 $output['use_authorname'] = true;
@@ -1714,6 +1745,62 @@ if (!class_exists('ISC_CLASS')) {
 
             if($new_licences == array()) return false;
             else return $new_licences;
+        }
+
+        /**
+         * list image post relations (called with ajax)
+         *
+         * @since 1.6.1
+         */
+        public function list_post_image_relations(){
+            // get all meta fields
+            $args = array(
+                'posts_per_page' => -1,
+                'post_status' => null,
+                'post_parent' => null,
+                'meta_query' => array(
+                    array(
+                        'key' => 'isc_post_images',
+                    ),
+                )
+            );
+            $posts_with_images = new WP_Query($args);
+
+            if($posts_with_images->have_posts()){
+                require_once(ISCPATH . '/templates/post_images_list.php');
+            }
+
+            wp_reset_postdata();
+
+            die();
+        }
+
+        /**
+         * list post image relations (called with ajax)
+         *
+         * @since 1.6.1
+         */
+        public function list_image_post_relations(){
+            // get all images
+            $args = array(
+                'post_type' => 'attachment',
+                'posts_per_page' => -1,
+                'post_status' => 'inherit',
+                'meta_query' => array(
+                    array(
+                        'key' => 'isc_image_posts',
+                    ),
+                )
+            );
+            $images_with_posts = new WP_Query($args);
+
+            if($images_with_posts->have_posts()){
+                require_once(ISCPATH . '/templates/image_posts_list.php');
+            }
+
+            wp_reset_postdata();
+
+            die();
         }
 
     }// end of class
