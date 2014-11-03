@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Source Control v1.5\n"
+"Project-Id-Version: Image Source Control v1.6.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-07 10:21+0100\n"
-"PO-Revision-Date: 2014-07-07 10:23+0100\n"
+"POT-Creation-Date: 2014-11-02 19:14+0100\n"
+"PO-Revision-Date: 2014-11-02 19:22+0100\n"
 "Last-Translator: Thomas Maier <post@webzunft.de>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -20,281 +20,244 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 # @ isc
-#: isc.class.php:84
-msgid "Not available"
-msgstr "Keine Quellenangabe"
+#: admin/admin.php:92
+#, php-format
+msgid ""
+"One or more attachments still have no source. See the <a href=\"%s\">missing "
+"sources</a> list"
+msgstr ""
+"Eines oder mehrere Bilder haben keine Quelle. Bitte besuche die Liste mit <a "
+"href=\"%s\">fehlenden Bilderquellen</a>."
 
 # @ isc
-#: isc.class.php:264 templates/missing_sources.php:7
-msgid "Missing Sources"
-msgstr "Fehlende Bildquellen"
+#: admin/admin.php:128
+msgid "Please specify the image source"
+msgstr "Bitte gib die Bildquelle an"
 
 # @ isc
-#: isc.class.php:265
-msgid "Image control - ISC plugin"
-msgstr "Image control - ISC Plugin"
-
-# @ isc
-#: isc.class.php:265
-msgid "Image Control"
-msgstr "Image Control"
-
-# @ isc
-#: isc.class.php:301
+#: admin/admin.php:151
 msgid "Image Source"
 msgstr "Bildquelle"
 
 # @ isc
-#: isc.class.php:303
+#: admin/admin.php:153
 msgid "Include the image source here."
 msgstr "Trage hier die Bildquelle ein."
 
 # @ isc
-#: isc.class.php:309
+#: admin/admin.php:159
 msgid "Check this box if this is your own image and doesn't need a source."
 msgstr ""
 "Markiere dieses Feld, wenn das Bild dein eigenes ist und/oder keine externe "
 "Quellenangabe notwendig ist."
 
 # @ isc
-#: isc.class.php:314
+#: admin/admin.php:164
 msgid "This is my image"
 msgstr "Das ist mein Bild."
 
 # @ isc
-#: isc.class.php:317
+#: admin/admin.php:167
 msgid "Image Source URL"
 msgstr "URL der Quelle"
 
 # @ isc
-#: isc.class.php:319
+#: admin/admin.php:169
 msgid "URL to link the source text to."
 msgstr "Vollständige URL zur Bildquelle. Wird im Frontend verlinkt."
 
 # @ isc
-#: isc.class.php:325
+#: admin/admin.php:175
 msgid "Image Licence"
 msgstr "Bildlizenz"
 
 # @ isc
-#: isc.class.php:326
+#: admin/admin.php:176
 msgid "Choose the image licence."
 msgstr "Bildlizenz wählen"
 
 # @ isc
-#: isc.class.php:436
-msgid "Show the list"
-msgstr "Bildquellen anzeigen"
+#: admin/admin.php:297 templates/missing_sources.php:7
+msgid "Missing Sources"
+msgstr "Fehlende Bildquellen"
 
 # @ isc
-#: isc.class.php:437
-msgid "Hide the list"
-msgstr "Bildquellen verstecken"
+#: admin/admin.php:298
+msgid "Image control - ISC plugin"
+msgstr "Image control - ISC Plugin"
 
 # @ isc
-#: isc.class.php:597
-msgid "Please specify the image source"
-msgstr "Bitte gib die Bildquelle an"
-
-# @ isc
-#: isc.class.php:838
-msgid "&#171; Previous"
-msgstr "&#171; Vorherige"
-
-# @ isc
-#: isc.class.php:840
-msgid "Next &#187;"
-msgstr "Weitere &#187;"
-
-# @ isc
-#: isc.class.php:889
-#, php-format
-msgid "<li><a href=\"%1$s\" title=\"View %2$s\">%3$s</a></li>"
-msgstr "<li><a href=\"%1$s\" title=\"%2$s\\ aufrufen\\\">%3$s</a></li>"
-
-# @ isc
-#: isc.class.php:931
-#, php-format
-msgid ""
-"Image list created by <a href=\"%s\" title=\"Image Source Control\">Image "
-"Source Control Plugin</a>"
-msgstr ""
-"Das Bilderverzeichnis wurde mit Hilfe vom <a href=\"%s\" title=\"Image "
-"Source Control\">Image Source Control Plugin</a> erstellt."
-
-# @ isc
-#: isc.class.php:955
-msgid "Thumbnail"
-msgstr "Miniaturbild"
-
-# @ isc
-#: isc.class.php:957
-msgid "Attachment's ID"
-msgstr "ID des Anhangs"
-
-# @ isc
-#: isc.class.php:958
-msgid "Title"
-msgstr "Titel"
-
-# @ isc
-#: isc.class.php:959
-msgid "Attached to"
-msgstr "Angezeigt unter"
-
-# @ isc
-#: isc.class.php:960
-msgid "Source"
-msgstr "Bildquelle"
-
-# @ isc
-#: isc.class.php:1160
-msgid "image sources"
+#: admin/admin.php:298
+#, fuzzy
+msgid "Image Sources"
 msgstr "Bildquellen"
 
-# @ isc
-#: isc.class.php:1163
-msgid "Owned by the author"
-msgstr "Bildrechte beim Autor"
+#: admin/admin.php:314
+msgid "How to display sources"
+msgstr "Wie Bildquellen angezeigt werden"
 
 # @ isc
-#: isc.class.php:1176
-msgid "Source:"
-msgstr "Quelle:"
-
-# @ isc
-#: isc.class.php:1178
-msgid "CC BY 2.0|http://creativecommons.org/licenses/by/2.0/legalcode"
-msgstr "CC BY 2.0|http://creativecommons.org/licenses/by/2.0/legalcode"
-
-# @ isc
-#: isc.class.php:1194 isc.class.php:1300
+#: admin/admin.php:317 admin/admin.php:456
 msgid "Image list headline"
 msgstr "Überschrift des Bilderverzeichnisses"
 
-# @ isc
-#: isc.class.php:1198
-msgid "Hide the image list"
-msgstr "Verstecke das Bildverzeichnis"
+#: admin/admin.php:320
+msgid "Overlay pre-text"
+msgstr "Text vor der Quellenangabe"
 
 # @ isc
-#: isc.class.php:1202
+#: admin/admin.php:321
+msgid "Overlay position"
+msgstr "Position der Beschriftung über dem Bild"
+
+# @ isc
+#: admin/admin.php:324
 msgid "Use thumbnails in images list"
 msgstr "Verwende Miniaturbilder im Bilderverzeichnis"
 
 # @ isc
-#: isc.class.php:1206
+#: admin/admin.php:325
 msgid "Thumbnails max-width"
 msgstr "maximale Breite der Miniaturbilder"
 
 # @ isc
-#: isc.class.php:1207
+#: admin/admin.php:326
 msgid "Thumbnails max-height"
 msgstr "maximale Höhe der Miniaturbilder"
 
 # @ isc
-#: isc.class.php:1211
+#: admin/admin.php:329
 msgid "Enable licences"
 msgstr "Lizenzen aktivieren"
 
 # @ isc
-#: isc.class.php:1212
+#: admin/admin.php:330
 msgid "List of licences"
 msgstr "Liste der Lizenzen"
 
 # @ isc
-#: isc.class.php:1215
+#: admin/admin.php:333
 msgid "Exclude own images"
 msgstr "Eigene Bilder ignorieren"
 
 # @ isc
-#: isc.class.php:1216
+#: admin/admin.php:334
 msgid "Use authors names"
 msgstr "Benutze den Namen des Autors"
 
 # @ isc
-#: isc.class.php:1217
+#: admin/admin.php:335
 msgid "Custom text for owned images"
 msgstr "Text für eigene Bilder"
 
 # @ isc
-#: isc.class.php:1218
+#: admin/admin.php:336
 msgid "Link to webgilde's website"
 msgstr "Link zur Webseite des Autors"
 
 # @ isc
-#: isc.class.php:1222
-msgid "Source as caption on image"
-msgstr "Quelle als Bildbeschriftung"
-
-# @ isc
-#: isc.class.php:1223
-msgid "Caption position"
-msgstr "Position der Beschriftung im Bild"
-
-# @ isc
-#: isc.class.php:1224
+#: admin/admin.php:337
 msgid "Warning when there is at least one missing source"
 msgstr "Warnung bei fehlenden Bildquellen"
 
 # @ isc
-#: isc.class.php:1225
+#: admin/admin.php:338
 msgid "Warnings when source not available"
 msgstr "Warnen bei fehlenden Bildquellen"
 
 # @ isc
-#: isc.class.php:1263
+#: admin/admin.php:387
 msgid "Images control settings"
 msgstr "Image Source Control Einstellungen"
 
 # @ isc
-#: isc.class.php:1267
-msgid "Post / Page images list"
-msgstr "Bildquellenverzeichnis von Beiträgen und Seiten"
+#: admin/admin.php:391
+msgid "How to display source in Frontend"
+msgstr "Anzeige der Bildquellen im Fronten"
+
+#: admin/admin.php:427
+msgid "Choose where to display image sources on singular pages"
+msgstr "Wähle aus, wo Bildquellen auf Einzelseiten angezeigt werden"
+
+#: admin/admin.php:432
+msgid "list below content"
+msgstr "Bildquellen unter dem Inhalt"
 
 # @ isc
-#: isc.class.php:1297
+#: admin/admin.php:433
+msgid "Displays a list of image sources below singular pages."
+msgstr "Bildquellen automatisch am Ende von Einzelseiten auflisten."
+
+#: admin/admin.php:436
+msgid "overlay"
+msgstr "Bildquellen über dem Bild (Overlay)"
+
+# @ isc
+#: admin/admin.php:437
+msgid "Display image source as a simple overlay"
+msgstr "Bildquelle über jedem Bild anzeigen."
+
+#: admin/admin.php:439
+msgid ""
+"If you don’t want to use any of these methods, you can still place the image "
+"source list manually as described <a href=\"http://webgilde.com/en/image-"
+"source-control/image-sources-frontend/\" title=\"external link\" target="
+"\"_blank\">here</a>"
+msgstr ""
+"Neben den oben genannten Methoden kannst du die Bildquellen ebenfalls "
+"manuell platzieren. Das Vorgehen ist <a href=\"http://webgilde.com/de/image-"
+"source-control/image-source-control-anleitung/\" title=\"external link\" "
+"target=\"_blank\">hier</a> beschrieben."
+
+#: admin/admin.php:445
+msgid "List below content"
+msgstr "Bildquellen unter dem Inhalt"
+
+# @ isc
+#: admin/admin.php:453
 msgid ""
 "The headline of the image list added via shortcode or function in your theme."
 msgstr ""
 "Die Überschrift des Bilderverzeichnisses, das mit einem Shortcode oder einer "
 "Funktion in das Theme integriert wurde."
 
-# @ isc
-#: isc.class.php:1310
-msgid ""
-"Hide the list when the post is loaded. A simple click on the list headline "
-"will show the list content."
-msgstr ""
-"Bildverzeichnis unter Beiträgen standardmäßig ausblenden. (ein Klick auf die "
-"Überschrift blendet die Liste ein)"
+#: admin/admin.php:463
+msgid "Overlay"
+msgstr "Bildquellen über dem Bild (Overlay)"
 
 # @ isc
-#: isc.class.php:1313
-msgid "Hide the image list of a post"
-msgstr "Verstecke das Bildverzeichnis eines Beitrags"
+#: admin/admin.php:474
+#, fuzzy
+msgid "The text preceding the source."
+msgstr "Text vor der Bildquelle."
 
 # @ isc
-#: isc.class.php:1320
+#: admin/admin.php:482
+#, fuzzy
+msgid "Position of overlay into images"
+msgstr "Position der Bildbeschriftung im Bild"
+
+# @ isc
+#: admin/admin.php:495
 msgid "Full images list"
 msgstr "Vollständiges Quellenverzeichnis"
 
 # @ isc
-#: isc.class.php:1333
+#: admin/admin.php:508
 msgid ""
 "Exclude images marked as 'own image' from image lists (post and full) and "
-"caption in the frontend. You can still manage them in the dashboard."
+"overlay in the frontend. You can still manage them in the dashboard."
 msgstr ""
 "Liste die Quellen eigener Bilder weder in Bilderverzeichnissen noch als "
-"Bildüberschrift (caption) im Frontend auf."
+"Bildüberschrift im Frontend auf."
 
 # @ isc
-#: isc.class.php:1337
+#: admin/admin.php:512
 msgid "Hide sources for own images"
 msgstr "Quellen eigener Bilder verstecken"
 
 # @ isc
-#: isc.class.php:1347
+#: admin/admin.php:522
 msgid ""
 "Display the author's public name as source when the image is owned by the "
 "author (the uploader of the image, not necessarily the author of the post "
@@ -306,12 +269,12 @@ msgstr ""
 "dieses Feld, um den Standardtext zu nutzen."
 
 # @ isc
-#: isc.class.php:1351
+#: admin/admin.php:526
 msgid "Use author name"
 msgstr "Name des Autors"
 
 # @ isc
-#: isc.class.php:1361
+#: admin/admin.php:536
 msgid ""
 "Enter the custom text to display if you do not want to use the author's "
 "public name."
@@ -320,7 +283,7 @@ msgstr ""
 "Bildquelle verwendet werden soll."
 
 # @ isc
-#: isc.class.php:1373
+#: admin/admin.php:548
 msgid ""
 "Enable this to be able to add and display copyright/copyleft licences for "
 "your images and manage them in the field below."
@@ -329,7 +292,7 @@ msgstr ""
 "hinzufügen, sowie im nächsten Feld verwalten möchtest."
 
 # @ isc
-#: isc.class.php:1386
+#: admin/admin.php:561
 msgid ""
 "List of licences the author can choose for an image. Enter a licence per "
 "line and separate the name from the optional link with a pipe symbol (e.g. "
@@ -341,12 +304,12 @@ msgstr ""
 "<em>CC BY 2.0|http://creativecommons.org/licenses/by/2.0/legalcode</em>."
 
 # @ isc
-#: isc.class.php:1395
+#: admin/admin.php:570
 msgid "Miscellaneous settings"
 msgstr "Verschiedene Einstellungen"
 
 # @ isc
-#: isc.class.php:1403
+#: admin/admin.php:578
 #, php-format
 msgid ""
 "Display a link to <a href=\"%s\">Image Source Control plugin&#39;s website</"
@@ -356,27 +319,27 @@ msgstr ""
 "Plugin</a> unter dem Bilderverzeichnis?"
 
 # @ isc
-#: isc.class.php:1415
+#: admin/admin.php:590
 msgid "Display thumbnails on the list of all images in the blog."
 msgstr "Zeige Miniaturbilder im Bilderverzeichnis an."
 
 # @ isc
-#: isc.class.php:1432
+#: admin/admin.php:607
 msgid "Custom value of the maximum allowed width for thumbnail."
 msgstr "Eigener Wert für die maximale Breite von Miniaturbildern."
 
 # @ isc
-#: isc.class.php:1444
+#: admin/admin.php:619
 msgid "Custom value of the maximum allowed height for thumbnail."
 msgstr "Eigener Wert für die maximale Höhe von Miniaturbildern."
 
 # @ isc
-#: isc.class.php:1453
+#: admin/admin.php:628
 msgid "Licences settings"
 msgstr "Bildlizenzen"
 
 # @ isc
-#: isc.class.php:1461
+#: admin/admin.php:636
 msgid ""
 "Warn and prevent data to be saved when an attachment is edited and the "
 "source has not been specified."
@@ -385,7 +348,7 @@ msgstr ""
 "wird und eine Bildquelle nicht angegeben wurde."
 
 # @ isc
-#: isc.class.php:1473
+#: admin/admin.php:648
 msgid ""
 "Display an admin notice in admin pages when one or more image sources are "
 "missing."
@@ -394,35 +357,97 @@ msgstr ""
 "fehlen."
 
 # @ isc
-#: isc.class.php:1485
-msgid "Position of captions into images"
-msgstr "Position der Bildbeschriftung im Bild"
+#: isc.class.php:84
+msgid "Not available"
+msgstr "Keine Quellenangabe"
 
 # @ isc
-#: isc.class.php:1501
-msgid "Tick to display source onto each image."
-msgstr "Aktivieren, um die Bildquelle über jedem Bild anzuzeigen."
+#: isc.class.php:652
+msgid "&#171; Previous"
+msgstr "&#171; Vorherige"
 
 # @ isc
-#: isc.class.php:1502
-msgid "The text preceding the source on each image."
-msgstr "Text vor der Bildquelle."
+#: isc.class.php:654
+msgid "Next &#187;"
+msgstr "Weitere &#187;"
 
 # @ isc
-#: isc.class.php:1685
+#: isc.class.php:703
+#, php-format
+msgid "<li><a href=\"%1$s\" title=\"View %2$s\">%3$s</a></li>"
+msgstr "<li><a href=\"%1$s\" title=\"%2$s\\ aufrufen\\\">%3$s</a></li>"
+
+# @ isc
+#: isc.class.php:745
 #, php-format
 msgid ""
-"One or more attachments still have no source. See the <a href=\"%s\">missing "
-"sources</a> list"
+"Image list created by <a href=\"%s\" title=\"Image Source Control\">Image "
+"Source Control Plugin</a>"
 msgstr ""
-"Eines oder mehrere Bilder haben keine Quelle. Bitte besuche die Liste mit <a "
-"href=\"%s\">fehlenden Bilderquellen</a>."
+"Das Bilderverzeichnis wurde mit Hilfe vom <a href=\"%s\" title=\"Image "
+"Source Control\">Image Source Control Plugin</a> erstellt."
+
+# @ isc
+#: isc.class.php:769
+msgid "Thumbnail"
+msgstr "Miniaturbild"
+
+# @ isc
+#: isc.class.php:771
+msgid "Attachment's ID"
+msgstr "ID des Anhangs"
+
+# @ isc
+#: isc.class.php:772
+msgid "Title"
+msgstr "Titel"
+
+# @ isc
+#: isc.class.php:773
+msgid "Attached to"
+msgstr "Angezeigt unter"
+
+# @ isc
+#: isc.class.php:774
+msgid "Source"
+msgstr "Bildquelle"
+
+# @ isc
+#: isc.class.php:942
+msgid "image sources"
+msgstr "Bildquellen"
+
+# @ isc
+#: isc.class.php:945
+msgid "Owned by the author"
+msgstr "Bildrechte beim Autor"
+
+# @ isc
+#: isc.class.php:957
+msgid "Source:"
+msgstr "Quelle:"
+
+# @ isc
+#: isc.class.php:959
+msgid "CC BY 2.0|http://creativecommons.org/licenses/by/2.0/legalcode"
+msgstr "CC BY 2.0|http://creativecommons.org/licenses/by/2.0/legalcode"
+
+# @ isc
+#: templates/image_posts_list.php:6
+msgid "Image"
+msgstr "Bild"
+
+# @ isc
+#: templates/image_posts_list.php:7
+msgid "Posts"
+msgstr "Beiträge"
 
 # @ isc
 #: templates/missing_sources.php:12
 msgid "Images with empty sources"
 msgstr "Bilder mit leerer Quellenangabe"
 
+# @ isc
 #: templates/missing_sources.php:13
 msgid "Images with empty sources and not belonging to an author."
 msgstr "Bilder ohne Quellenangabe und Zuordnung zum Autor."
@@ -439,11 +464,13 @@ msgstr "Bildtitel"
 
 # @ isc
 #: templates/missing_sources.php:19 templates/missing_sources.php:45
+#: templates/post_images_list.php:6
 msgid "Post / Page"
 msgstr "Beitrag / Seite"
 
 # @ isc
 #: templates/missing_sources.php:25 templates/missing_sources.php:51
+#: templates/post_images_list.php:21
 msgid "edit this image"
 msgstr "dieses Bild bearbeiten"
 
@@ -457,6 +484,7 @@ msgstr "Gehe zur Bearbeitungsansicht des zugeordneten Artikels"
 msgid "no connection"
 msgstr "keine Verknüpfung"
 
+# @ isc
 #: templates/missing_sources.php:32
 msgid "No empty sources found!"
 msgstr "Keine leeren Bildquellen gefunden!"
@@ -466,6 +494,7 @@ msgstr "Keine leeren Bildquellen gefunden!"
 msgid "Unindexed images"
 msgstr "Nicht-indizierte Bilder"
 
+# @ isc
 #: templates/missing_sources.php:39
 msgid ""
 "Images that haven’t been indexed yet, e.g. after plugin installation. "
@@ -474,6 +503,41 @@ msgstr ""
 "Nicht-indizierte Bilder (technisch: bisher kein meta field angelegt, z.B. "
 "direkt nach Pluginaktivierung)"
 
+# @ isc
 #: templates/missing_sources.php:58
 msgid "All images are indexed."
 msgstr "Alle Bilder indiziert."
+
+# @ isc
+#: templates/missing_sources.php:61
+msgid "Debug"
+msgstr "Fehlerbehebung"
+
+# @ isc
+#: templates/missing_sources.php:62
+msgid "list post-image relations"
+msgstr "Beitrag-Bild Verknüpfungen auflisten"
+
+# @ isc
+#: templates/missing_sources.php:63
+msgid ""
+"This will list the information ISC knows about the connection between posts "
+"and images."
+msgstr "Listet die Verknüfungen zwischen Beiträgen und Bildern auf."
+
+# @ isc
+#: templates/missing_sources.php:65
+msgid "list image-post relations"
+msgstr "Bild-Beitrag Verknüpfungen auflisten"
+
+# @ isc
+#: templates/missing_sources.php:66
+msgid ""
+"This will list the information ISC knows about the connection between images "
+"and posts."
+msgstr "Listet die Verknüfungen zwischen Bildern und Beiträgen auf."
+
+# @ isc
+#: templates/post_images_list.php:7
+msgid "Images"
+msgstr "Bilder"
