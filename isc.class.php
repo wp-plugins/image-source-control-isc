@@ -37,11 +37,6 @@ if (!class_exists('ISC_Class')) {
         );
 
         /**
-        * Commonly used text elements
-        */
-        protected $_common_texts = array();
-
-        /**
          * allowed image file types/extensions
          * @since 1.1
          */
@@ -81,7 +76,6 @@ if (!class_exists('ISC_Class')) {
         {
             // load all plugin options
             $this->_options = get_option('isc_options');
-            $this->_common_texts['not_available'] = __('Not available', ISCTEXTDOMAIN);
 
             // insert all function for the frontend here
 
@@ -129,7 +123,7 @@ if (!class_exists('ISC_Class')) {
         {
             // display inline sources
             $options = $this->get_isc_options();
-            if (in_array('overlay', $options['display_type'])) {
+            if (is_array($options['display_type']) && in_array('overlay', $options['display_type'])) {
                 $pattern = '#(\[caption.*align="(.+)"[^\]*]{0,}\])? *(<a [^>]+>)? *(<img .*class=".*(align\d{4,})?.*wp-image-(\d+)\D*".*src="(.+)".*/?>).*(?(3)(?:</a>)|.*).*(?(1)(?:\[/caption\])|.*)#isU';
                 $count = preg_match_all($pattern, $content, $matches);
                 if (false !== $count) {
@@ -139,8 +133,11 @@ if (!class_exists('ISC_Class')) {
                         if($options['exclude_own_images']){
                             if(get_post_meta($id, 'isc_image_source_own', true)) continue;
                         }
+                        // don’t display empty sources
                         $src = $matches[7][$i];
-                        $source = '<p class="isc-source-text">' . $options['source_pretext'] . ' ' . $this->get_source_by_url($src) . '</p>';
+                        if(!$source_string = $this->get_source_by_url($src)) continue;
+
+                        $source = '<p class="isc-source-text">' . $options['source_pretext'] . ' ' . $source_string . '</p>';
                         $old_content = $matches[0][$i];
                         $new_content = str_replace('wp-image-' . $id, 'wp-image-' . $id . ' with-source', $old_content);
                         $alignment = (!empty($matches[1][$i]))? $matches[2][$i] : $matches[5][$i];
@@ -151,7 +148,7 @@ if (!class_exists('ISC_Class')) {
             }
 
             // attach image source list to content, if option is enabled
-            if (is_singular() && in_array('list', $options['display_type'])) {
+            if (is_singular() && is_array($options['display_type']) && in_array('list', $options['display_type'])) {
                 $content = $content . $this->list_post_attachments_with_sources();
             }
 
@@ -167,6 +164,7 @@ if (!class_exists('ISC_Class')) {
          * @updated 1.5 wrapped source into source url
          *
          * @param int $id id of the image
+         * @return bool|string false if no source was given, else string with source
          */
         public function render_image_source_string($id){
             $id = absint($id);
@@ -178,7 +176,7 @@ if (!class_exists('ISC_Class')) {
             $metadata['own'] = get_post_meta($id, 'isc_image_source_own', true);
             $metadata['licence'] = get_post_meta($id, 'isc_image_licence', true);
 
-            $source = $this->_common_texts['not_available'];
+            $source = '';
 
             $att_post = get_post($id);
 
@@ -195,6 +193,8 @@ if (!class_exists('ISC_Class')) {
                     $source = $metadata['source'];
                 }
             }
+
+            if($source == '') return false;
 
             // wrap link around source, if given
             if('' != $metadata['source_url']){
