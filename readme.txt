@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: image, images, picture, picture source, image source, mediathek, media, caption
 Requires at least: 3.5
-Tested up to: 4.0
-Stable tag: 1.7.2
+Tested up to: 4.2
+Stable tag: 1.8.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -23,16 +23,21 @@ You can choose between different image source list types:
 * source list below the content
 * combined source list of all images
 
-**Features**
+**Frontend Features**
+
+* display sources for images in content, galleries, shortcodes and featured images
+* show image source directly in the image (not working with all images and themes)
+* include a list with all images and their sources of the current page/post
+* include a list with all images and their sources with all images or only those included in posts
+* attach lists to automatically or using shortcodes or template functions
+* display image sources on archive pages
+
+**Backend Features**
 
 * manage image source within media dashboard
-* lets you mark an image to belong to the uploader
+* mark an image to belong to the uploader
 * lists images with missing sources in the backend
-* show image source directly in the image
 * warnings, if image source is missing
-* shortcode to list the sources in the editor
-* shortcode to list all images in the blog as a paginated list
-* function to include sources of a post in templates
 * link sources to any url
 * manage, display and link licences
 
@@ -42,7 +47,7 @@ English, German
 
 **Instructions**
 
-Find instructions under *Other Notes* or at the <a href="http://webgilde.com/en/image-source-control/image-source-control-manual/">image source control website</a>.
+Find instructions under *Other Notes* or at the [image source control website](http://webgilde.com/en/image-source-control/image-source-control-manual/).
 
 == Installation ==
 
@@ -62,6 +67,38 @@ e.g.
 1. added two new fields to media library
 
 == Changelog ==
+
+= 1.8.4 =
+
+* [feature] added option to display all images in the full list, not just those visible in posts
+* [fixed] default author text not showing up
+
+= 1.8.3 =
+
+* [fixed] saving pre text for source overlay, thanks to maler.whick
+
+= 1.8.2 =
+
+* [feature] show image sources for changed images
+* [feature] show image sources for images with query parameters
+
+= 1.8.1 =
+
+* [fixed] set default value for new option to prevent error message
+
+= 1.8 =
+
+* [feature] display image sources on archive pages (see settings)
+* [feature] use `isc_thumbnail_source()` to display thumbnail source in templates
+* [feature] added image sources for galleries and other shortcodes
+* updated German translation
+
+= 1.7.3 =
+
+* [fixed] bug on ajax calls preventing the source fields to show up on ajax called pages in the dashboard
+* [fixed] bug on multisite update
+* [optimized] don’t hide setting boxes
+* [optimized] finished moving all publically needed function to its own class
 
 = 1.7.2 =
 
@@ -127,7 +164,7 @@ Read [this post](http://webgilde.com/en/image-source-control-1-6/) to learn more
 
 = 1.3.5 =
 
-* [feature] added hooks to enable developers to add their own images to the image source list (more information in the [manual](http://webgilde.com/en/image-source-control/image-source-control-manual/))
+* [feature] added hooks to enable developers to add their own images to the image source list – more information in the [manual](http://webgilde.com/en/image-source-control/image-source-control-manual/)
 * [feature] added image licences
 * updated settings page layout so it works WordPress 3.8 RC1
 * [l10n] updated German translation
