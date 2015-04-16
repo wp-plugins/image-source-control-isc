@@ -2,8 +2,8 @@
 Contributors: webzunft
 Tags: image, images, picture, picture source, image source, mediathek, media, caption
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 1.8.3
+Tested up to: 4.2
+Stable tag: 1.8.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,7 +28,7 @@ You can choose between different image source list types:
 * display sources for images in content, galleries, shortcodes and featured images
 * show image source directly in the image (not working with all images and themes)
 * include a list with all images and their sources of the current page/post
-* include a list with all images and their sources
+* include a list with all images and their sources with all images or only those included in posts
 * attach lists to automatically or using shortcodes or template functions
 * display image sources on archive pages
 
@@ -67,6 +67,11 @@ e.g.
 1. added two new fields to media library
 
 == Changelog ==
+
+= 1.8.4 =
+
+* [feature] added option to display all images in the full list, not just those visible in posts
+* [fixed] default author text not showing up
 
 = 1.8.3 =
 

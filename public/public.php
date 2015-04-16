@@ -242,7 +242,8 @@ if (!class_exists('ISC_Public')) {
                 'before_links' => '',
                 'after_links' => '',
                 'prev_text' => '&#171; Previous',
-                'next_text' => 'Next &#187;'
+                'next_text' => 'Next &#187;',
+                'included' => 'displayed'
                 ),
                 $atts));
 
@@ -256,15 +257,22 @@ if (!class_exists('ISC_Public')) {
                 'post_type' => 'attachment',
                 'numberposts' => -1,
                 'post_status' => null,
-                'post_parent' => null,
-                'meta_query' => array(
+                'post_parent' => null
+            );
+
+            // check mode
+            if($included == 'all'){
+                // load all images
+
+            } else { // load only images attached to posts
+                $args['meta_query'] = array(
                     array(
                         'key' => 'isc_image_posts',
                         'value' => 'a:0:{}',
                         'compare' => '!='
                     )
-                )
-            );
+                );
+            }
 
             $attachments = get_posts($args);
             if (empty($attachments)) {
@@ -609,7 +617,7 @@ if (!class_exists('ISC_Public')) {
                         $source = get_the_author_meta('display_name', $att_post->post_author);
                     }
                 } else {
-                    $source = $this->options['by_author_text'];
+                    $source = $this->_options['by_author_text'];
                 }
             } else {
                 if ('' != $metadata['source']) {
@@ -628,7 +636,8 @@ if (!class_exists('ISC_Public')) {
             if($options['enable_licences'] && isset($metadata['licence']) && $metadata['licence']) {
                 $licences = $this->licences_text_to_array($options['licences']);
                 if(isset($licences[$metadata['licence']]['url'])) $licence_url = $licences[$metadata['licence']]['url'];
-                if($licence_url) {
+
+                if(isset($licence_url) && $licence_url != '') {
                     $source = sprintf('%1$s | <a href="%3$s" target="_blank" rel="nofollow">%2$s</a>', $source, $metadata['licence'], $licence_url);
                 } else {
                     $source = sprintf('%1$s | %2$s', $source, $metadata['licence']);
