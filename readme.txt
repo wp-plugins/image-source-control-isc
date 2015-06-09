@@ -70,7 +70,7 @@ e.g.
 
 = 1.8.6 =
 
-* removed duplicate post links from full source list
+* removed duplicate post links on full source list
 
 = 1.8.5 =
 
