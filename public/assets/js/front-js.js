@@ -64,9 +64,9 @@ function isc_update_caption_position(jQ_Obj) {
     var attmt = parseInt(att.css('margin-top').substring(0, att.css('margin-top').indexOf('px')));
 
     //caption horizontal margin
-    var tml = 5;
+    var tml = 0;
     //caption vertical margin
-    var tmt = 5;
+    var tmt = 0;
 
     var pos = isc_front_data.caption_position;
     var posl = 0;
